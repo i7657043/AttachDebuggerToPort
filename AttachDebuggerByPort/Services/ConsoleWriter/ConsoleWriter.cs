@@ -19,7 +19,7 @@ namespace AttachDebuggerByPort.Services
         public void PrintCouldNotAttachError(Process process)
         {
             Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine($"\nA debugger could not be attached to the chosen Process (Pid: {process.Id})\nPlease choose another Process by Port. Goodbye.");
+            Console.WriteLine($"\nA debugger could not be attached to Process {process.ProcessName} (Id: {process.Id})\nPlease choose another Process by Port. Goodbye.");
             Console.ForegroundColor = defaultColour;
         }
 
