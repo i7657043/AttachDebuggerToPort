@@ -1,2 +1,2 @@
 # AttachDebuggerToPort
-Attach a debugger to a Visual Studio instance by selecting the Port
+Attach a Visual Studio instance to a process executing on a specific port
