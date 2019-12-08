@@ -1,4 +1,4 @@
-.Net Core Console app. Attach a Visual Studio debugger to a process executing on a specific port.
+.Net Core Console app. Programmatically attach a Visual Studio debugger to a process executing on a specific port.
 This app targets .Net Core 2.2.
 
 ## Usage 
