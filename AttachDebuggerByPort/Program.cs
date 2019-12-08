@@ -26,17 +26,15 @@ namespace AttachDebuggerByPort
 
             CommandOption helpOption = app.HelpOption("-?|-h|--help");
             app.VersionOption("--version", () => env.ApplicationVersion);
-            CommandOption portOption = app.Option("-p|--port", "", CommandOptionType.SingleValue);
+
+            CommandOption portOption = app.Option("-p|--port", "Port", CommandOptionType.SingleValue);
+            CommandOption filterOption = app.Option("-f|--filter", "VS instance filter", CommandOptionType.SingleValue);
 
             app.OnExecute(() =>
             {
                 IConsoleWriter consoleWriter = serviceProvider.GetService<IConsoleWriter>();
 
-                if (helpOption.HasValue())
-                {
-                    consoleWriter.PrintHelp();
-                    return -0;
-                }
+                IApplicationManager applicationManager = serviceProvider.GetService<IApplicationManager>();
 
                 if (!portOption.HasValue())
                 {
@@ -44,9 +42,7 @@ namespace AttachDebuggerByPort
                     return -1;
                 }
 
-                IApplicationManager applicationManager = serviceProvider.GetService<IApplicationManager>();
-
-                return applicationManager.AttachDebugger(portOption.Value());
+                return applicationManager.AttachDebugger(portOption.Value(), filterOption.Value() ?? string.Empty);
             });
 
             int exitCode = app.Execute(args);

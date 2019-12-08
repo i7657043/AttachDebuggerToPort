@@ -348,3 +348,5 @@ MigrationBackup/
 
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
+/AttachDebuggerByPort/appsettings.json
+/AttachDebuggerByPort/Properties/launchSettings.json

@@ -2,6 +2,6 @@
 {
     public interface IApplicationManager
     {
-        int AttachDebugger(string portNumber);
+        int AttachDebugger(string portNumber, string filter = "");
     }
 }

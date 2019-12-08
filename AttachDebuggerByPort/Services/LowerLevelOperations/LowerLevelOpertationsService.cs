@@ -33,23 +33,31 @@ namespace AttachDebuggerByPort.Services
 
         public void AttachVisualStudioToProcess(Process visualStudioProcess, Process applicationProcess)
         {
-            if (TryGetVsInstance(visualStudioProcess.Id, out visualStudioInstance))
+            try
             {
-                DTEProcess processToAttachTo = visualStudioInstance.Debugger.LocalProcesses.Cast<DTEProcess>()
-                    .FirstOrDefault(process => process.ProcessID == applicationProcess.Id);
-
-                if (processToAttachTo != null)
+                if (TryGetVsInstance(visualStudioProcess.Id, out visualStudioInstance))
                 {
-                    processToAttachTo.Attach();
+                    DTEProcess processToAttachTo = visualStudioInstance.Debugger.LocalProcesses.Cast<DTEProcess>()
+                        .FirstOrDefault(process => process.ProcessID == applicationProcess.Id);
 
-                    ShowWindow((int)visualStudioProcess.MainWindowHandle, 3);
-                    SetForegroundWindow(visualStudioProcess.MainWindowHandle);
-                }
-                else
-                {
-                    throw new InvalidOperationException("Visual Studio process cannot find specified application '" + applicationProcess.Id + "'");
+                    if (processToAttachTo != null)
+                    {
+                        processToAttachTo.Attach();
+
+                        ShowWindow((int)visualStudioProcess.MainWindowHandle, 3);
+                        SetForegroundWindow(visualStudioProcess.MainWindowHandle);
+                    }
+                    else
+                    {
+                        throw new InvalidOperationException("Visual Studio process cannot find specified application '" + applicationProcess.Id + "'");
+                    }
                 }
             }
+            catch (Exception)
+            {
+                _consoleWriter.PrintCouldNotAttachError(applicationProcess);
+                throw;
+            }            
         }
 
         public bool TryGetVsInstance(int processId, out _DTE instance)
