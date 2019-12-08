@@ -39,7 +39,7 @@ namespace AttachDebuggerByPort.Services
 
         public void PrintGetVsInstanceChoice()
         {
-            Console.Write("Please enter your choice: ");
+            Console.Write("\nPlease enter your choice: ");
             Console.ForegroundColor = ConsoleColor.Yellow;
         }
         
@@ -48,7 +48,7 @@ namespace AttachDebuggerByPort.Services
             Console.WriteLine($"\nPlease enter [{distinctWindowTitlesChoice + 1}] to attach the VS instance titled the following to the target process:");
             defaultColour = Console.ForegroundColor;
             Console.ForegroundColor = ConsoleColor.Cyan;
-            Console.WriteLine(distinctWindowTitles[distinctWindowTitlesChoice] + "\n");
+            Console.WriteLine(distinctWindowTitles[distinctWindowTitlesChoice]);
             Console.ForegroundColor = defaultColour;
         }
 
