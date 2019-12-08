@@ -9,9 +9,7 @@ namespace AttachDebuggerByPort.Services
     {
         private readonly IConsoleWriter _consoleWriter;
         private readonly ILowerLevelOpertationsService _lowerLevelOpertationsService;
-
-        int portNumberValidated = 0;
-
+        
         public ApplicationManager(IConsoleWriter consoleWriter, ILowerLevelOpertationsService lowerLevelOpertationsService)
         {
             _consoleWriter = consoleWriter;
@@ -20,35 +18,40 @@ namespace AttachDebuggerByPort.Services
 
         public int AttachDebugger(string portNumber)
         {
+            int portNumberParsed = ParsePortNumber(portNumber);
+
+            int targetProcessId = _lowerLevelOpertationsService.GetProcessIdByPortNumber(portNumberParsed);
+
+            Process targetProcess = Process.GetProcessById(targetProcessId);
+
+            _consoleWriter.PrintTargetProcessDetails(targetProcess, portNumberParsed);
+
+            List<Process> vsProcessesOtherThanThisOne = GetVSProcessesOtherThanThisOne();
+            if (vsProcessesOtherThanThisOne.Count == 0)
+                return -1;
+
+            int vsInstanceChoice = GetBestVsInstanceToAttachAsDebugger(vsProcessesOtherThanThisOne);
+
+            _lowerLevelOpertationsService.AttachVisualStudioToProcess(vsProcessesOtherThanThisOne[vsInstanceChoice], targetProcess);
+
+            _consoleWriter.PrintAttachedSuccess(targetProcess, vsProcessesOtherThanThisOne[vsInstanceChoice], portNumberParsed, vsInstanceChoice);
+
+            _consoleWriter.PrintApplicationsJobCompleteAndExit();
+
+            return 0;
+        }
+
+        private int ParsePortNumber(string portNumber)
+        {
             try
             {
-                portNumberValidated = int.Parse(portNumber);
+                return int.Parse(portNumber);
             }
             catch (Exception)
             {
                 _consoleWriter.PrintPortNumberMustBeAnIntegerError();
                 throw;
             }
-
-            int targetProcessId = _lowerLevelOpertationsService.GetProcessIdByPortNumber(portNumberValidated);
-
-            Process targetProcess = Process.GetProcessById(targetProcessId);
-
-            _consoleWriter.PrintTargetProcessDetails(targetProcess, portNumberValidated);
-
-            List<Process> vsProcessesOtherThanThisOne = GetVSProcessesOtherThanThisOne();
-            if (vsProcessesOtherThanThisOne.Count == 0)
-                return -1;
-
-            int vsInstanceChoice = GetBestVsInstanceToAttachAsDebugger(vsProcessesOtherThanThisOne);            
-
-            //AttachVisualStudioToProcess(vsProcessesOtherThanThisOne[vsInstanceChoice], targetProcess);
-
-            _consoleWriter.PrintAttachedSuccess(targetProcess, vsProcessesOtherThanThisOne[vsInstanceChoice], portNumberValidated, vsInstanceChoice);
-
-            _consoleWriter.PrintApplicationsJobCompleteAndExit();
-
-            return 0;
         }
 
         private int GetBestVsInstanceToAttachAsDebugger(List<Process> vsProcessesOtherThanThisOne)
@@ -83,7 +86,7 @@ namespace AttachDebuggerByPort.Services
         {
             List<Process> otherVsProcesses = Process.GetProcesses()
                 .Where(o => o.ProcessName.Contains("devenv")
-                && !o.MainWindowTitle.Contains("AttachDebuggerByPort")).ToList();
+                /*&& !o.MainWindowTitle.Contains("AttachDebuggerByPort")*/).ToList();
 
             if (otherVsProcesses.Count == 0)
                 _consoleWriter.PrintNoOtherVSInstancesAreOpenToUseAsDebugger();
