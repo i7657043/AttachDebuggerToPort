@@ -21,6 +21,8 @@ namespace AttachDebuggerByPort.Services
         public int AttachDebugger(string portNumber, string filter)
         {
             int portNumberParsed = ParsePortNumber(portNumber);
+            if (portNumberParsed == -1)
+                return -1;
 
             int targetProcessId = _lowerLevelOpertationsService.GetProcessIdByPortNumber(portNumberParsed);
 
@@ -29,13 +31,16 @@ namespace AttachDebuggerByPort.Services
             _consoleWriter.PrintTargetProcessDetails(targetProcess, portNumberParsed);
 
             List<Process> vsProcessesOtherThanThisOne = GetVSProcessesOtherThanThisOne().FilterProcesses(filter);
-
             if (vsProcessesOtherThanThisOne.Count == 0)
                 return -1;
-            else if (vsProcessesOtherThanThisOne.Count > 1)
-                vsInstanceToAttachTo = GetBestVsInstanceToAttachAsDebugger(vsProcessesOtherThanThisOne);
 
-            //_lowerLevelOpertationsService.AttachVisualStudioToProcess(vsProcessesOtherThanThisOne[vsInstanceChoice], targetProcess);
+            vsInstanceToAttachTo = vsProcessesOtherThanThisOne.Count > 1
+                ? GetBestVsInstanceToAttachAsDebugger(vsProcessesOtherThanThisOne)
+                : vsProcessesOtherThanThisOne[0];
+
+            bool attached = _lowerLevelOpertationsService.AttachVisualStudioToProcess(vsInstanceToAttachTo, targetProcess);
+            if (!attached)
+                return -1;
 
             _consoleWriter.PrintAttachedSuccess(targetProcess, vsInstanceToAttachTo, portNumberParsed);
 
@@ -53,8 +58,9 @@ namespace AttachDebuggerByPort.Services
             catch (Exception)
             {
                 _consoleWriter.PrintPortNumberMustBeAnIntegerError();
-                throw;
             }
+
+            return -1;
         }
 
         private Process GetBestVsInstanceToAttachAsDebugger(List<Process> vsProcessesOtherThanThisOne)
@@ -89,7 +95,7 @@ namespace AttachDebuggerByPort.Services
 
                     return vsProcessesOtherThanThisOne[choice];
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     _consoleWriter.PrintVsInstanceChoiceError();
 

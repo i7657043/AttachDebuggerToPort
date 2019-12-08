@@ -18,8 +18,8 @@ namespace AttachDebuggerByPort.Services
 
         public void PrintCouldNotAttachError(Process process)
         {
-            Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.WriteLine($"A debugger could not be attached to the chosen Process (Pid: {process.Id})\nPlease choose another Process by Port. Goodbye.");
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine($"\nA debugger could not be attached to the chosen Process (Pid: {process.Id})\nPlease choose another Process by Port. Goodbye.");
             Console.ForegroundColor = defaultColour;
         }
 
@@ -33,7 +33,7 @@ namespace AttachDebuggerByPort.Services
         public void PrintTargetProcessDetails(Process targetProcess, int portNumber)
         {
             Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine($"\nTarget Process {targetProcess.ProcessName} (Id: {targetProcess.Id}) found running on Port {portNumber}\n");
+            Console.WriteLine($"Target Process {targetProcess.ProcessName} (Id: {targetProcess.Id}) found running on Port {portNumber}");
             Console.ForegroundColor = defaultColour;
         }
 
@@ -43,10 +43,9 @@ namespace AttachDebuggerByPort.Services
             Console.ForegroundColor = ConsoleColor.Yellow;
         }
         
-
         public void PrintOtherVsInstanceChoices(List<string> distinctWindowTitles, int distinctWindowTitlesChoice)
         {
-            Console.WriteLine($"Please enter [{distinctWindowTitlesChoice + 1}] to attach the VS instance titled the following to the target process:");
+            Console.WriteLine($"\nPlease enter [{distinctWindowTitlesChoice + 1}] to attach the VS instance titled the following to the target process:");
             defaultColour = Console.ForegroundColor;
             Console.ForegroundColor = ConsoleColor.Cyan;
             Console.WriteLine(distinctWindowTitles[distinctWindowTitlesChoice] + "\n");

@@ -14,9 +14,11 @@ namespace AttachDebuggerByPort
 
             CommandLineApplication app = new CommandLineApplication()
             {
-                Name = "DebugByPort",
+                Name = "AttachDebuggerByPort",
                 FullName = "Attach Debugger By Port"
             };
+
+            app.ShowHelp();
 
             ServiceProvider serviceProvider = new ServiceCollection()
             .AddSingleton<IConsoleWriter, ConsoleWriter>()

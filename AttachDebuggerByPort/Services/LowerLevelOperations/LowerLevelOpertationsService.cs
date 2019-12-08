@@ -31,7 +31,7 @@ namespace AttachDebuggerByPort.Services
         public LowerLevelOpertationsService(IConsoleWriter consoleWriter)
             => _consoleWriter = consoleWriter;
 
-        public void AttachVisualStudioToProcess(Process visualStudioProcess, Process applicationProcess)
+        public bool AttachVisualStudioToProcess(Process visualStudioProcess, Process applicationProcess)
         {
             try
             {
@@ -46,6 +46,8 @@ namespace AttachDebuggerByPort.Services
 
                         ShowWindow((int)visualStudioProcess.MainWindowHandle, 3);
                         SetForegroundWindow(visualStudioProcess.MainWindowHandle);
+
+                        return true;
                     }
                     else
                     {
@@ -56,8 +58,9 @@ namespace AttachDebuggerByPort.Services
             catch (Exception)
             {
                 _consoleWriter.PrintCouldNotAttachError(applicationProcess);
-                throw;
-            }            
+            }
+
+            return false;
         }
 
         public bool TryGetVsInstance(int processId, out _DTE instance)
