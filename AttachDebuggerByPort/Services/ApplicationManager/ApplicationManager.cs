@@ -86,7 +86,7 @@ namespace AttachDebuggerByPort.Services
         {
             List<Process> otherVsProcesses = Process.GetProcesses()
                 .Where(o => o.ProcessName.Contains("devenv")
-                /*&& !o.MainWindowTitle.Contains("AttachDebuggerByPort")*/).ToList();
+                && !o.MainWindowTitle.Contains("AttachDebuggerByPort")).ToList();
 
             if (otherVsProcesses.Count == 0)
                 _consoleWriter.PrintNoOtherVSInstancesAreOpenToUseAsDebugger();

@@ -9,6 +9,13 @@ namespace AttachDebuggerByPort.Services
     {
         private ConsoleColor defaultColour = Console.ForegroundColor;
 
+        public void PrintHelp()
+        {
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine("Please choose a Port number and this app will connect a VS instance to the process listening on it automatically");
+            Console.ForegroundColor = defaultColour;
+        }
+
         public void PrintPortNumberNotAcceptableError()
         {
             Console.ForegroundColor = ConsoleColor.Red;

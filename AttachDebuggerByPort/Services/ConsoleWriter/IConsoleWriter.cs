@@ -6,6 +6,7 @@ namespace AttachDebuggerByPort.Services
 {
     public interface IConsoleWriter
     {
+        void PrintHelp();
         void PrintPortNumberNotAcceptableError();
         void PrintTargetProcessDetails(Process targetProcess, int portNumber);
         void PrintOtherVsInstanceChoices(List<string> distinctWindowTitles, int distinctWindowTitlesChoice);            
