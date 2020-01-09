@@ -4,5 +4,5 @@
 
 ## Usage 
 1. AttachDebuggerByPort -p <5354>
-2. AttachDebuggerByPort -p <5354> -f <ProjectName>
+2. AttachDebuggerByPort -p <5354> -f <VsInstanceWindowTitle>
 
