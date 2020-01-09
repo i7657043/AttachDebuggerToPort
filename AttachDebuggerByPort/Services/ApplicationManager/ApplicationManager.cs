@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Process = System.Diagnostics.Process;
 
 namespace AttachDebuggerByPort.Services
@@ -10,7 +11,6 @@ namespace AttachDebuggerByPort.Services
     {
         private readonly IConsoleWriter _consoleWriter;
         private readonly ILowerLevelOpertationsService _lowerLevelOpertationsService;
-        private Process vsInstanceToAttachTo;
 
         public ApplicationManager(IConsoleWriter consoleWriter, ILowerLevelOpertationsService lowerLevelOpertationsService)
         {
@@ -34,7 +34,7 @@ namespace AttachDebuggerByPort.Services
             if (vsProcessesOtherThanThisOne.Count == 0)
                 return -1;
 
-            vsInstanceToAttachTo = vsProcessesOtherThanThisOne.Count > 1
+            Process vsInstanceToAttachTo = vsProcessesOtherThanThisOne.Count > 1
                 ? GetBestVsInstanceToAttachAsDebugger(vsProcessesOtherThanThisOne)
                 : vsProcessesOtherThanThisOne[0];
 
@@ -83,13 +83,12 @@ namespace AttachDebuggerByPort.Services
 
                 try
                 {
-                    //Minus 1 as we increase count of selection on-screen to make it more human readable
-                    
+                    //Minus 1 as we increase count of selection on-screen to make it more human readable                    
                     int choice = int.Parse(Console.ReadLine()) - 1;
 
                     Process processChoice = vsProcessesOtherThanThisOne.Where(x => x.MainWindowTitle.Contains(windowTitles[choice]))
                         .FirstOrDefault(x => x.MainWindowTitle.Contains("Administrator")) 
-                        //If more than 1 exist and can't prioritise by Admin then get oldest running instance
+                        //If more than 1 exists and we can't prioritise by Admin then get oldest running instance
                         ?? vsProcessesOtherThanThisOne.OrderByDescending(x => x.StartTime)
                         .FirstOrDefault(x => x.MainWindowTitle.Contains(windowTitles[choice]));
 

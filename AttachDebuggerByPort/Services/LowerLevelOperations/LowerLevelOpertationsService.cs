@@ -24,7 +24,7 @@ namespace AttachDebuggerByPort.Services
         [DllImport("User32")]
         private static extern int ShowWindow(int hwnd, int nCmdShow);
 
-        private static _DTE visualStudioInstance;
+        private static _DTE VisualStudioInstance;
 
         private readonly IConsoleWriter _consoleWriter;
 
@@ -35,9 +35,9 @@ namespace AttachDebuggerByPort.Services
         {
             try
             {
-                if (TryGetVsInstance(visualStudioProcess.Id, out visualStudioInstance))
+                if (TryGetVsInstance(visualStudioProcess.Id, out VisualStudioInstance))
                 {
-                    DTEProcess processToAttachTo = visualStudioInstance.Debugger.LocalProcesses.Cast<DTEProcess>()
+                    DTEProcess processToAttachTo = VisualStudioInstance.Debugger.LocalProcesses.Cast<DTEProcess>()
                         .FirstOrDefault(process => process.ProcessID == applicationProcess.Id);
 
                     if (processToAttachTo != null)
@@ -55,7 +55,7 @@ namespace AttachDebuggerByPort.Services
                     }
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 _consoleWriter.PrintCouldNotAttachError(applicationProcess);
             }

@@ -1,4 +1,6 @@
-﻿namespace AttachDebuggerByPort.Services
+﻿using System.Threading.Tasks;
+
+namespace AttachDebuggerByPort.Services
 {
     public interface IApplicationManager
     {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-
+using System.Threading.Tasks;
 
 namespace AttachDebuggerByPort.Services
 {
@@ -45,10 +45,10 @@ namespace AttachDebuggerByPort.Services
         
         public void PrintOtherVsInstanceChoices(List<string> distinctWindowTitles, int distinctWindowTitlesChoice)
         {
-            Console.WriteLine($"\nPlease enter [{distinctWindowTitlesChoice + 1}] to attach the VS instance titled the following to the target process:");
-            defaultColour = Console.ForegroundColor;
-            Console.ForegroundColor = ConsoleColor.Cyan;
-            Console.WriteLine(distinctWindowTitles[distinctWindowTitlesChoice]);
+            Console.WriteLine();
+            ConsoleColor defaultColour = Console.ForegroundColor;
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine($"Please enter [{distinctWindowTitlesChoice + 1}] to attach the VS instance [{distinctWindowTitles[distinctWindowTitlesChoice]}]`");
             Console.ForegroundColor = defaultColour;
         }
 
@@ -71,13 +71,11 @@ namespace AttachDebuggerByPort.Services
         {
             Console.ForegroundColor = defaultColour;
             Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine($"\nAttached VS Instance (PID: {vsProcessAttaching.Id}, " +
-                $"Process Name: {vsProcessAttaching.MainWindowTitle})\n");
+            Console.WriteLine($"\nAttached VS Instance (Process Name: {vsProcessAttaching.MainWindowTitle})\n");
             Console.ForegroundColor = ConsoleColor.Cyan;
             Console.WriteLine($"TO\n");
             Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine($"Application Instance (PID: {targetProcess.Id}, " +
-                $"Process Name: {targetProcess.MainWindowTitle}-{targetProcess.ProcessName} on Port {portNumber})");
+            Console.WriteLine($"Application Instance (Process Name: {targetProcess.MainWindowTitle}-{targetProcess.ProcessName} on Port {portNumber})");
             Console.ForegroundColor = defaultColour;
         }
         public void PrintProcessIdMustBeAnIntegerError()
@@ -106,8 +104,7 @@ namespace AttachDebuggerByPort.Services
 
         public void PrintApplicationsJobCompleteAndExit()
         {
-            Console.WriteLine("\n\nPress any key to Exit. The debugger WILL NOT detach.\n");
-            Console.ReadKey();
+            Console.WriteLine("\n\nSuccess.\nThe application will now exit. The debugger WILL NOT detach.\n");
         }
     }
 }
