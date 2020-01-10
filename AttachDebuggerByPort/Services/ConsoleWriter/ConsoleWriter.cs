@@ -16,10 +16,10 @@ namespace AttachDebuggerByPort.Services
             Console.ForegroundColor = defaultColour;
         }
 
-        public void PrintCouldNotAttachError(Process process)
+        public void PrintCouldNotAttachError()
         {
             Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine($"\nA debugger could not be attached to Process {process.ProcessName} (Id: {process.Id})\nPlease choose another Process by Port. Goodbye.");
+            Console.WriteLine($"\nA debugger could not be attached to the target Processes. The application selected as debugger may already be in use. Goodbye.");
             Console.ForegroundColor = defaultColour;
         }
 
@@ -33,7 +33,7 @@ namespace AttachDebuggerByPort.Services
         public void PrintTargetProcessDetails(Process targetProcess, int portNumber)
         {
             Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine($"Target Process {targetProcess.ProcessName} (Id: {targetProcess.Id}) found running on Port {portNumber}");
+            Console.WriteLine($"Target Process {targetProcess.ProcessName} (PID: {targetProcess.Id}) found running on Port {portNumber}");
             Console.ForegroundColor = defaultColour;
         }
 
@@ -48,7 +48,7 @@ namespace AttachDebuggerByPort.Services
             Console.WriteLine();
             ConsoleColor defaultColour = Console.ForegroundColor;
             Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.WriteLine($"Please enter [{distinctWindowTitlesChoice + 1}] to attach the VS instance [{distinctWindowTitles[distinctWindowTitlesChoice]}]`");
+            Console.WriteLine($"Please enter [{distinctWindowTitlesChoice + 1}] to attach the VS instance [{distinctWindowTitles[distinctWindowTitlesChoice]}]");
             Console.ForegroundColor = defaultColour;
         }
 
@@ -59,6 +59,7 @@ namespace AttachDebuggerByPort.Services
             Console.WriteLine("VS Instance choice must be an Integer.\nPlease try again. Goodbye.");
             Console.ForegroundColor = defaultColour;
         }
+
         public void PrintNoOtherVSInstancesAreOpenToUseAsDebugger()
         {
             defaultColour = Console.ForegroundColor;
@@ -67,15 +68,35 @@ namespace AttachDebuggerByPort.Services
             Console.ForegroundColor = defaultColour;
         }
 
-        public void PrintAttachedSuccess(Process targetProcess, Process vsProcessAttaching, int portNumber)
+        public void PrintNotEnoughVSInstancesAreOpenToUseAsDebugger(int numberOfPorts, int freeVsInstances)
         {
+            defaultColour = Console.ForegroundColor;
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine($"Not enough free VS Instance are open. You require {numberOfPorts - freeVsInstances} more VS instances.\nPlease start some more and try again. Goodbye.");
             Console.ForegroundColor = defaultColour;
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine($"\nAttached VS Instance (Process Name: {vsProcessAttaching.MainWindowTitle})\n");
-            Console.ForegroundColor = ConsoleColor.Cyan;
-            Console.WriteLine($"TO\n");
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine($"Application Instance (Process Name: {targetProcess.MainWindowTitle}-{targetProcess.ProcessName} on Port {portNumber})");
+        }
+
+        public void PrintAttachedSuccess(List<Process> targetProcesses, Process vsProcessAttaching)
+        {
+            int counter = 1;
+
+            Console.ForegroundColor = defaultColour;
+            Console.ForegroundColor = ConsoleColor.Yellow;
+
+            Console.WriteLine($"\n-------------------------------------------------------------------------------------------------");
+
+            foreach (Process targetProcess in targetProcesses)
+            {                
+                Console.WriteLine($"{counter}) Attached VS Instance {vsProcessAttaching.MainWindowTitle.Replace(" - Microsoft Visual Studio", string.Empty)} (PID: {vsProcessAttaching.Id})");
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                Console.WriteLine($"\nTO\n");
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine($"Application Instance {targetProcess.ProcessName} (PID: {targetProcess.Id})");
+                Console.WriteLine($"-------------------------------------------------------------------------------------------------\n");
+
+                counter++;
+            }           
+            
             Console.ForegroundColor = defaultColour;
         }
         public void PrintProcessIdMustBeAnIntegerError()
@@ -102,9 +123,21 @@ namespace AttachDebuggerByPort.Services
             Console.ForegroundColor = defaultColour;
         }
 
+        public void PrintPortNumbersMustBeAnIntegerError()
+        {
+            ConsoleColor defaultColour = Console.ForegroundColor;
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine("Port numbers must all be Integers. Please try again. Goodbye.");
+            Console.ForegroundColor = defaultColour;
+        }
+
         public void PrintApplicationsJobCompleteAndExit()
         {
-            Console.WriteLine("\n\nSuccess.\nThe application will now exit. The debugger WILL NOT detach.\n");
+            ConsoleColor defaultColour = Console.ForegroundColor;
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine("SUCCESS!");
+            Console.ForegroundColor = defaultColour;
+            Console.WriteLine("\nThe application will now exit. The debugger WILL NOT detach.\n");
         }
     }
 }

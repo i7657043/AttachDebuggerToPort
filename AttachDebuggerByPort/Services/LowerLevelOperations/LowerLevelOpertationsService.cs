@@ -1,5 +1,6 @@
 ﻿using EnvDTE;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -31,33 +32,43 @@ namespace AttachDebuggerByPort.Services
         public LowerLevelOpertationsService(IConsoleWriter consoleWriter)
             => _consoleWriter = consoleWriter;
 
-        public bool AttachVisualStudioToProcess(Process visualStudioProcess, Process applicationProcess)
+        public bool AttachVisualStudioToProcess(Process debuggerProcess, List<Process> targetProcesses)
         {
             try
             {
-                if (TryGetVsInstance(visualStudioProcess.Id, out VisualStudioInstance))
+                List<DTEProcess> dteProcessesToAttachTo = new List<DTEProcess>();
+
+                if (TryGetVsInstance(debuggerProcess.Id, out VisualStudioInstance))
                 {
-                    DTEProcess processToAttachTo = VisualStudioInstance.Debugger.LocalProcesses.Cast<DTEProcess>()
-                        .FirstOrDefault(process => process.ProcessID == applicationProcess.Id);
-
-                    if (processToAttachTo != null)
+                    foreach (Process process in targetProcesses)
                     {
-                        processToAttachTo.Attach();
+                        DTEProcess processToAttachTo = VisualStudioInstance.Debugger.LocalProcesses.Cast<DTEProcess>()
+                        .FirstOrDefault(p => p.ProcessID == process.Id);
 
-                        ShowWindow((int)visualStudioProcess.MainWindowHandle, 3);
-                        SetForegroundWindow(visualStudioProcess.MainWindowHandle);
+                        dteProcessesToAttachTo.Add(processToAttachTo);
+                    }
+                    
+                    if (dteProcessesToAttachTo.Count > 0)
+                    {
+                        foreach (DTEProcess process in dteProcessesToAttachTo)
+                        {
+                            process.Attach();
+                        }
+
+                        ShowWindow((int)debuggerProcess.MainWindowHandle, 3);
+                        SetForegroundWindow(debuggerProcess.MainWindowHandle);
 
                         return true;
                     }
                     else
                     {
-                        throw new InvalidOperationException("Visual Studio process cannot find specified application '" + applicationProcess.Id + "'");
+                        throw new InvalidOperationException("Visual Studio process cannot find any specified processes to attach to");
                     }
                 }
             }
             catch (Exception ex)
             {
-                _consoleWriter.PrintCouldNotAttachError(applicationProcess);
+                _consoleWriter.PrintCouldNotAttachError();
             }
 
             return false;

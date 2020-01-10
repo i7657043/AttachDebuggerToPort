@@ -1,9 +1,10 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace AttachDebuggerByPort.Services
 {
     public interface IApplicationManager
     {
-        int AttachDebugger(string portNumber, string filter = "");
+        int AttachDebugger(List<string> portNumber, string filter = "");
     }
 }
