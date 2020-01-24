@@ -19,15 +19,19 @@ namespace AttachDebuggerByPort.Services
         public void PrintCouldNotAttachError()
         {
             Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine($"\nA debugger could not be attached to the target Processes. The application selected as debugger may already be in use. Goodbye.");
+            Console.WriteLine($"\nA debugger could not be attached to the target Processes. The application selected as debugger may already be in use.");
             Console.ForegroundColor = defaultColour;
+            Console.WriteLine("\nPress any key to Exit. Goodbye.");
+            Console.ReadKey();
         }
 
         public void PrintPortNumberNotAcceptableError()
         {
             Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine("The Port number flag (-p/--port) must exist and be an Integer. Please try again or see the help page (--h/--help) for details. Goodbye.");
+            Console.WriteLine("The Port number flag (-p/--port) must exist and be an Integer. Please try again or see the help page (--h/--help) for details.");
             Console.ForegroundColor = defaultColour;
+            Console.WriteLine("\nPress any key to Exit. Goodbye.");
+            Console.ReadKey();
         }
 
         public void PrintTargetProcessDetails(Process targetProcess, int portNumber)
@@ -56,24 +60,30 @@ namespace AttachDebuggerByPort.Services
         {
             defaultColour = Console.ForegroundColor;
             Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine("VS Instance choice must be an Integer.\nPlease try again. Goodbye.");
+            Console.WriteLine("VS Instance choice must be an Integer.\nPlease try again.");
             Console.ForegroundColor = defaultColour;
+            Console.WriteLine("Press any key to Exit. Goodbye.");
+            Console.ReadKey();
         }
 
         public void PrintNoOtherVSInstancesAreOpenToUseAsDebugger()
         {
             defaultColour = Console.ForegroundColor;
             Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine("No free VS Instance are open.\nPlease start some and try again. Goodbye.");
+            Console.WriteLine("No free VS Instance are open.\nPlease start some and try again.");
             Console.ForegroundColor = defaultColour;
+            Console.WriteLine("\nPress any key to Exit. Goodbye.");
+            Console.ReadKey();
         }
 
         public void PrintNotEnoughVSInstancesAreOpenToUseAsDebugger(int numberOfPorts, int freeVsInstances)
         {
             defaultColour = Console.ForegroundColor;
             Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine($"Not enough free VS Instance are open. You require {numberOfPorts - freeVsInstances} more VS instances.\nPlease start some more and try again. Goodbye.");
+            Console.WriteLine($"Not enough free VS Instance are open. You require {numberOfPorts - freeVsInstances} more VS instances.\nPlease start some more and try again.");
             Console.ForegroundColor = defaultColour;
+            Console.WriteLine("\nPress any key to Exit. Goodbye.");
+            Console.ReadKey();
         }
 
         public void PrintAttachedSuccess(List<Process> targetProcesses, Process vsProcessAttaching)
@@ -87,7 +97,7 @@ namespace AttachDebuggerByPort.Services
 
             foreach (Process targetProcess in targetProcesses)
             {                
-                Console.WriteLine($"{counter}) Attached VS Instance {vsProcessAttaching.MainWindowTitle.Replace(" - Microsoft Visual Studio", string.Empty)} (PID: {vsProcessAttaching.Id})");
+                Console.WriteLine($"Attached VS Instance {vsProcessAttaching.MainWindowTitle.Replace(" - Microsoft Visual Studio", string.Empty)} (PID: {vsProcessAttaching.Id})");
                 Console.ForegroundColor = ConsoleColor.Cyan;
                 Console.WriteLine($"\nTO\n");
                 Console.ForegroundColor = ConsoleColor.Yellow;
@@ -103,32 +113,40 @@ namespace AttachDebuggerByPort.Services
         {
             ConsoleColor defaultColour = Console.ForegroundColor;
             Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine("\nProcess Id must be an Integer.\nPlease try again. Goodbye.");
+            Console.WriteLine("\nProcess Id must be an Integer.\nPlease try again.");
             Console.ForegroundColor = defaultColour;
+            Console.WriteLine("\nPress any key to Exit. Goodbye.");
+            Console.ReadKey();
         }
 
         public void PrintNoProcessesListeningOnSelectedPortError(int portNum)
         {
             ConsoleColor defaultColour = Console.ForegroundColor;
             Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine($"\nNo processes are listening on port {portNum}.\nPlease try again. Goodbye.");
+            Console.WriteLine($"No processes are listening on port {portNum}.\nPlease try again.");                        
             Console.ForegroundColor = defaultColour;
+            Console.WriteLine("\nPress any key to Exit. Goodbye.");
+            Console.ReadKey();
         }
 
         public void PrintPortNumberMustBeAnIntegerError()
         {
             ConsoleColor defaultColour = Console.ForegroundColor;
             Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine("Port number must be an Integer. Please try again. Goodbye.");
+            Console.WriteLine("Port number must be an Integer. Please try again.");
             Console.ForegroundColor = defaultColour;
+            Console.WriteLine("\nPress any key to Exit. Goodbye.");
+            Console.ReadKey();
         }
 
         public void PrintPortNumbersMustBeAnIntegerError()
         {
             ConsoleColor defaultColour = Console.ForegroundColor;
             Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine("Port numbers must all be Integers. Please try again. Goodbye.");
+            Console.WriteLine("Port numbers must all be Integers. Please try again.");            
             Console.ForegroundColor = defaultColour;
+            Console.WriteLine("\nPress any key to Exit. Goodbye.");
+            Console.ReadKey();
         }
 
         public void PrintApplicationsJobCompleteAndExit()
