@@ -137,7 +137,8 @@ namespace AttachDebuggerByPort.Services
             Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine("SUCCESS!");
             Console.ForegroundColor = defaultColour;
-            Console.WriteLine("\nThe application will now exit. The debugger WILL NOT detach.\n");
+            Console.WriteLine("\nPress any key to exit the application. The debugger WILL NOT detach.\n");
+            Console.ReadKey();
         }
     }
 }

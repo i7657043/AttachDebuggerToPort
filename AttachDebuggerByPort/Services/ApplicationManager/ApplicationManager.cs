@@ -97,7 +97,7 @@ namespace AttachDebuggerByPort.Services
         private Process GetBestVsInstanceToAttachAsDebugger(List<Process> vsProcessesOtherThanThisOne)
         {
             List<string> vsWindows = vsProcessesOtherThanThisOne.Select(x => x.MainWindowTitle.Replace("(Administrator)", string.Empty).Trim())
-                .Where(mainWindowTitle => !mainWindowTitle.Contains("Running"))
+                .Where(mainWindowTitle => !mainWindowTitle.Contains("Running") && !mainWindowTitle.Contains("Debug"))
                 .Distinct()
                 .ToList();
 
@@ -119,7 +119,7 @@ namespace AttachDebuggerByPort.Services
                         .FirstOrDefault(x => x.MainWindowTitle.Contains("Administrator"))
                         //If more than 1 exists and we can't prioritise by Admin then get oldest running instance
                         ?? vsProcessesOtherThanThisOne.OrderByDescending(x => x.StartTime)
-                        .FirstOrDefault(x => x.MainWindowTitle.Contains(vsWindows[choice]) && !x.MainWindowTitle.Contains("Running"));
+                        .FirstOrDefault(x => x.MainWindowTitle.Contains(vsWindows[choice]) && (!x.MainWindowTitle.Contains("Running") && !x.MainWindowTitle.Contains("Debug")));
 
                     return vsProcessesOtherThanThisOne[choice];
                 }
