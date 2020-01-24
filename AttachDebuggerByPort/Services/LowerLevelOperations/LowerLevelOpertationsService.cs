@@ -135,22 +135,25 @@ namespace AttachDebuggerByPort.Services
 
             Regex portNumRegex = new Regex($@".*LISTENING(\+?\d+)");
 
-            string result = process.StandardOutput.ReadToEnd().Replace(" ", "").Replace(@"\r", "").Replace(@"\n", "");
+            string result = process.StandardOutput.ReadToEnd()
+                .Replace(" ", "")
+                .Replace(@"\r", "")
+                .Replace(@"\n", "");
 
             Match match = portNumRegex.Match(result);
 
             try
             {
-                processId = int.Parse(match.Groups[1].Value);
+                processId = int.Parse(match?.Groups[1]?.Value);
             }
             catch (FormatException)
             {
-                _consoleWriter.PrintNoProcessesListeningOnSelectedPortError(portNum);
+                _consoleWriter.PrintProcessIdMustBeAnIntegerError();
                 Environment.Exit(-1);
             }
             catch (Exception)
             {
-                _consoleWriter.PrintProcessIdMustBeAnIntegerError();
+                _consoleWriter.PrintNoProcessesListeningOnSelectedPortError(portNum);
                 Environment.Exit(-1);
             }
 

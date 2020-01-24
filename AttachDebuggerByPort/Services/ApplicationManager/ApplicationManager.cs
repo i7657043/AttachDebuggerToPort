@@ -24,7 +24,7 @@ namespace AttachDebuggerByPort.Services
             if (portNumbersParsed == null)
                 return -1;
 
-            List<Process> vsProcessesOtherThanThisOne = GetVSProcessesOtherThanThisOne().FilterProcesses(filter);
+            List<Process> vsProcessesOtherThanThisOne = GetVSProcessesOtherThanThisOne()?.FilterProcesses(filter);
             if (vsProcessesOtherThanThisOne.Count == 0)
             {
                 _consoleWriter.PrintNoOtherVSInstancesAreOpenToUseAsDebugger();
@@ -57,21 +57,7 @@ namespace AttachDebuggerByPort.Services
             _consoleWriter.PrintApplicationsJobCompleteAndExit();
 
             return 0;
-        }
-
-        private int ParsePortNumber(string portNumber)
-        {
-            try
-            {
-                return int.Parse(portNumber);
-            }
-            catch (Exception)
-            {
-                _consoleWriter.PrintPortNumberMustBeAnIntegerError();
-            }
-
-            return -1;
-        }
+        } 
 
         private List<int> ParsePortNumbers(List<string> portNumbers)
         {
@@ -142,7 +128,7 @@ namespace AttachDebuggerByPort.Services
         {
             List<Process> otherVsProcesses = Process.GetProcesses()
                 .Where(o => o.ProcessName.Contains("devenv")
-                //Don't attach to VS debugging the AttachDebuggerByPort app 
+                //Don't attach to VS debugging the AttachDebuggerByPort app (For testing and debugging this app)
                 && !o.MainWindowTitle.Contains("AttachDebuggerByPort")).ToList();        
 
             return otherVsProcesses;
