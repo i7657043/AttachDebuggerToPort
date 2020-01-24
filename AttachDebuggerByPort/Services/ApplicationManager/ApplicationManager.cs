@@ -113,13 +113,15 @@ namespace AttachDebuggerByPort.Services
 
                 try
                 {
+                    //+1 above Index for human-readable std output
                     int choice = int.Parse(Console.ReadLine()) - 1;
 
                     Process processChoice = vsProcessesOtherThanThisOne.Where(x => x.MainWindowTitle.Contains(vsWindows[choice]))
                         .FirstOrDefault(x => x.MainWindowTitle.Contains("Administrator"))
                         //If more than 1 exists and we can't prioritise by Admin then get oldest running instance
                         ?? vsProcessesOtherThanThisOne.OrderByDescending(x => x.StartTime)
-                        .FirstOrDefault(x => x.MainWindowTitle.Contains(vsWindows[choice]) && (!x.MainWindowTitle.Contains("Running") && !x.MainWindowTitle.Contains("Debug")));
+                        .FirstOrDefault(x => x.MainWindowTitle.Contains(vsWindows[choice]) 
+                        && !x.MainWindowTitle.Contains("Running") && !x.MainWindowTitle.Contains("Debug"));
 
                     return vsProcessesOtherThanThisOne[choice];
                 }
@@ -131,9 +133,9 @@ namespace AttachDebuggerByPort.Services
                 }
             }
 
-            //Prioritise attaching debugger to VS instance running as Admin
+            //Prioritise attaching debugger to VS instance running as Admin or return any VS instance not already in Debug or Running mode
             return vsProcessesOtherThanThisOne.FirstOrDefault(x => x.MainWindowTitle.Contains("Administrator")) 
-                ?? vsProcessesOtherThanThisOne.FirstOrDefault(x => !x.MainWindowTitle.Contains("Running"));
+                ?? vsProcessesOtherThanThisOne.FirstOrDefault(x => !x.MainWindowTitle.Contains("Running") && !x.MainWindowTitle.Contains("Debug"));
         }
         
         private List<Process> GetVSProcessesOtherThanThisOne()
