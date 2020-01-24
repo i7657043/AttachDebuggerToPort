@@ -146,11 +146,6 @@ namespace AttachDebuggerByPort.Services
             {
                 processId = int.Parse(match?.Groups[1]?.Value);
             }
-            catch (FormatException)
-            {
-                _consoleWriter.PrintProcessIdMustBeAnIntegerError();
-                Environment.Exit(-1);
-            }
             catch (Exception)
             {
                 _consoleWriter.PrintNoProcessesListeningOnSelectedPortError(portNum);
