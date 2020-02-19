@@ -104,8 +104,8 @@ namespace AttachDebuggerByPort.Services
 
                     Process processChoice = vsProcessesOtherThanThisOne.Where(x => x.MainWindowTitle.Contains(vsWindows[choice]))
                         .FirstOrDefault(x => x.MainWindowTitle.Contains("Administrator"))
-                        //If more than 1 exists and we can't prioritise by Admin then get oldest running instance
-                        ?? vsProcessesOtherThanThisOne.OrderByDescending(x => x.StartTime)
+                        //If more than 1 exists and we can't prioritise by Admin then get newest running instance
+                        ?? vsProcessesOtherThanThisOne.OrderBy(x => x.StartTime)
                         .FirstOrDefault(x => x.MainWindowTitle.Contains(vsWindows[choice]) 
                         && !x.MainWindowTitle.Contains("Running") && !x.MainWindowTitle.Contains("Debug"));
 
