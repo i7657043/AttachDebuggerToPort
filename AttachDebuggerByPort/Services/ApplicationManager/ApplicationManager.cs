@@ -29,7 +29,7 @@ namespace AttachDebuggerByPort.Services
             {
                 _consoleWriter.PrintNoOtherVSInstancesAreOpenToUseAsDebugger();
                 return -1;
-            }   
+            }
 
             List<Process> targetProcesses = new List<Process>();
 
@@ -45,7 +45,7 @@ namespace AttachDebuggerByPort.Services
             }
 
             Process vsInstanceToAttachTo = vsProcessesOtherThanThisOne.Count > 1
-                ? GetBestVsInstanceToAttachAsDebugger(vsProcessesOtherThanThisOne)
+                ? GetBestVsInstanceToAttachAsDebugger(vsProcessesOtherThanThisOne, filter)
                 : vsProcessesOtherThanThisOne[0];
 
             bool attached = _lowerLevelOpertationsService.AttachVisualStudioToProcess(vsInstanceToAttachTo, targetProcesses);
@@ -57,7 +57,7 @@ namespace AttachDebuggerByPort.Services
             _consoleWriter.PrintApplicationsJobCompleteAndExit();
 
             return 0;
-        } 
+        }
 
         private List<int> ParsePortNumbers(List<string> portNumbers)
         {
@@ -80,36 +80,23 @@ namespace AttachDebuggerByPort.Services
             return null;
         }
 
-        private Process GetBestVsInstanceToAttachAsDebugger(List<Process> vsProcessesOtherThanThisOne)
+        private Process GetBestVsInstanceToAttachAsDebugger(List<Process> vsProcessesOtherThanThisOne, string filter)
         {
             List<string> vsWindows = vsProcessesOtherThanThisOne.Select(x => x.MainWindowTitle.Replace("(Administrator)", string.Empty).Trim())
                 .Where(mainWindowTitle => !mainWindowTitle.Contains("Running") && !mainWindowTitle.Contains("Debug"))
-                .Distinct()
                 .ToList();
 
             //If there are more than 1 different VS Windows open
             if (vsWindows.Count() > 1)
             {
-                for (int i = 0; i < vsWindows.Count(); i++)
-                {
-                    _consoleWriter.PrintOtherVsInstanceChoices(vsWindows, i);
-                }
-
-                _consoleWriter.PrintGetVsInstanceChoice();
-
                 try
                 {
-                    //+1 above Index for human-readable std output
-                    int choice = int.Parse(Console.ReadLine()) - 1;
+                    Process proc = null;
 
-                    Process processChoice = vsProcessesOtherThanThisOne.Where(x => x.MainWindowTitle.Contains(vsWindows[choice]))
-                        .FirstOrDefault(x => x.MainWindowTitle.Contains("Administrator"))
-                        //If more than 1 exists and we can't prioritise by Admin then get newest running instance
-                        ?? vsProcessesOtherThanThisOne.OrderBy(x => x.StartTime)
-                        .FirstOrDefault(x => x.MainWindowTitle.Contains(vsWindows[choice]) 
-                        && !x.MainWindowTitle.Contains("Running") && !x.MainWindowTitle.Contains("Debug"));
+                    //If more than 1 exists and we can't prioritise by Admin then get newest running instance
+                    proc = vsProcessesOtherThanThisOne.OrderBy(x => x.StartTime).FirstOrDefault(x => x.MainWindowTitle.Contains(filter) && !x.MainWindowTitle.Contains("Running") && !x.MainWindowTitle.Contains("Debug"));
 
-                    return vsProcessesOtherThanThisOne[choice];
+                    return proc;
                 }
                 catch (Exception)
                 {
@@ -120,16 +107,16 @@ namespace AttachDebuggerByPort.Services
             }
 
             //Prioritise attaching debugger to VS instance running as Admin or return any VS instance not already in Debug or Running mode
-            return vsProcessesOtherThanThisOne.FirstOrDefault(x => x.MainWindowTitle.Contains("Administrator")) 
+            return vsProcessesOtherThanThisOne.FirstOrDefault(x => x.MainWindowTitle.Contains("Administrator"))
                 ?? vsProcessesOtherThanThisOne.FirstOrDefault(x => !x.MainWindowTitle.Contains("Running") && !x.MainWindowTitle.Contains("Debug"));
         }
-        
+
         private List<Process> GetVSProcessesOtherThanThisOne()
         {
             List<Process> otherVsProcesses = Process.GetProcesses()
                 .Where(o => o.ProcessName.Contains("devenv")
                 //Don't attach to VS debugging the AttachDebuggerByPort app (For testing and debugging this app)
-                && !o.MainWindowTitle.Contains("AttachDebuggerByPort")).ToList();        
+                && !o.MainWindowTitle.Contains("AttachDebuggerByPort")).ToList();
 
             return otherVsProcesses;
         }
